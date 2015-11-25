@@ -42,12 +42,25 @@ typedef struct MyVector{
 	unsigned int length;
 	unsigned int capacity;
 }StringVector;
-
+//构建一个长为len，元素为String类型的数组
 void IniStrVector(StringVector* strVector,unsigned int len);
+
+//将一个c类型的字符串插入到StringVector的末尾，如果已满，则返回错误-1,否则返回1
 int InsertString(StringVector* strVector,const char* string);
+
+//将c类型的字符串赋值给索引值inx位置的String
 void AssignString(StringVector* strVector,unsigned int inx,const char* string);
-void FreeStrVector(StringVector* strVector);
+
+//取出StringVector索引inx处的字符串，以c类型字符串返回,若数组越界，怎输出错误，返回空字符串
 char* GetString(StringVector* strVector,unsigned int inx);
+
+//删除索引位置inx处的字符串,后面的字符串前移，若数组越界，则什么也不做
 void EraseString(StringVector *strVector,unsigned int inx);
+
+//清空数组，length置0
 void ClearStrVector(StringVector *strVector);
+
+//释放StringVector的全部内存
+void FreeStrVector(StringVector* strVector);
+
 #endif
