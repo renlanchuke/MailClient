@@ -13,105 +13,95 @@ static const char base64_chars[65] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
                                                    "abcdefghijklmnopqrstuvwxyz"
                                                     "0123456789+/";
 
-
-//判断字符是否为64个可见字符
-
-static bool is_base64(unsigned char c) {
-    return (isalnum(c) || (c == '+') || (c == '/'));
-}
-
-void base64_encode(String *ret, unsigned char const* bytes_to_encode, unsigned int in_len) {
+void base64Encode(String *output, unsigned char const* bytesEncode) {
     //debug
-    //printf("in_len %d\n\n",in_len);
-    //String ret;
-    //IniString(&ret);
+    //printf("inStringLength %d\n\n",inStringLength);
+    //String output;
+    //IniString(&output);
     int i = 0, j = 0;
-    unsigned char char_array_3[3], char_array_4[4];
+    int inBytesLength=strlen(bytesEncode);
+    unsigned char char3Array[3], char4Array[4];
 
-    while (in_len--) {
-        char_array_3[i++] = *(bytes_to_encode++);
+    while (inBytesLength--) {
+        char3Array[i++] = *(bytesEncode++);
         if (i == 3) {
-            char_array_4[0] = (char_array_3[0] & 0xfc) >> 2;
-            char_array_4[1] = ((char_array_3[0] & 0x03) << 4) + ((char_array_3[1] & 0xf0) >> 4);
-            char_array_4[2] = ((char_array_3[1] & 0x0f) << 2) + ((char_array_3[2] & 0xc0) >> 6);
-            char_array_4[3] = char_array_3[2] & 0x3f;
+            char4Array[0] = (char3Array[0] & 0xfc) >> 2;
+            char4Array[1] = ((char3Array[0] & 0x03) << 4) + ((char3Array[1] & 0xf0) >> 4);
+            char4Array[2] = ((char3Array[1] & 0x0f) << 2) + ((char3Array[2] & 0xc0) >> 6);
+            char4Array[3] = char3Array[2] & 0x3f;
 
             for (j = 0; j < 4; j++)
-                AddChar(ret, base64_chars[char_array_4[j]]);
+                AddChar(output, base64_chars[char4Array[j]]);
             i = 0;
         }
     }
 
     if (i) {
         for (j = i; j < 3; j++)
-            char_array_3[j] = '\0';
+            char3Array[j] = '\0';
         //debug
-        //printf("char_array_3 %s\n",char_array_3);
-        char_array_4[0] = (char_array_3[0] & 0xfc) >> 2;
-        char_array_4[1] = ((char_array_3[0] & 0x03) << 4) + ((char_array_3[1] & 0xf0) >> 4);
-        char_array_4[2] = ((char_array_3[1] & 0x0f) << 2) + ((char_array_3[2] & 0xc0) >> 6);
-        char_array_4[3] = char_array_3[2] & 0x3f;
-         //printf("char_array_4 %d\n",char_array_4[0]);
+        //printf("char3Array %s\n",char3Array);
+        char4Array[0] = (char3Array[0] & 0xfc) >> 2;
+        char4Array[1] = ((char3Array[0] & 0x03) << 4) + ((char3Array[1] & 0xf0) >> 4);
+        char4Array[2] = ((char3Array[1] & 0x0f) << 2) + ((char3Array[2] & 0xc0) >> 6);
+        char4Array[3] = char3Array[2] & 0x3f;
+         //printf("char4Array %d\n",char4Array[0]);
         for (j = 0; (j < i + 1); j++){
             //printf("base64_chars %c\n",);
-            AddChar(ret, base64_chars[char_array_4[j]]);
-           // printf("%s \n",ret.str);
+            AddChar(output, base64_chars[char4Array[j]]);
+           // printf("%s \n",output.str);
 
         }
 
-
-
-
-
         while ((i++ < 3))
-             AddChar(ret,'=');
+             AddChar(output,'=');
 
     }
 
-    //return &ret;
+    //outputurn &output;
 
 }
 
-void base64_decode(String* ret, String const *encoded_string) {
-    int in_len = encoded_string->length;
-    int i = 0, j = 0, in_ = 0;
-    unsigned char char_array_4[4], char_array_3[3];
-    //String ret;
-    //IniString(&ret);
+void base64Decode(String* output, String const *encodedString) {
+    int inStringLength = encodedString->length;
+    int i = 0, j = 0, index = 0;
+    unsigned char char4Array[4], char3Array[3];
+    //String output;
+    //IniString(&output);
 
-    while (in_len-- && (encoded_string->str[in_] != '=') && is_base64(encoded_string->str[in_])) {
-        char_array_4[i++] = encoded_string->str[in_];
-        in_++;
+    while (inStringLength-- && (encodedString->str[index] != '=') && is_base64(encodedString->str[index])) {
+        char4Array[i++] = encodedString->str[index];
+        index++;
         if (i == 4) {
             for (i = 0; i < 4; i++)
-                char_array_4[i] = strchr(base64_chars,char_array_4[i]) - base64_chars;
+                char4Array[i] = strchr(base64_chars,char4Array[i]) - base64_chars;
 
-            char_array_3[0] = (char_array_4[0] << 2) + ((char_array_4[1] & 0x30) >> 4);
-            char_array_3[1] = ((char_array_4[1] & 0xf) << 4) + ((char_array_4[2] & 0x3c) >> 2);
-            char_array_3[2] = ((char_array_4[2] & 0x3) << 6) + char_array_4[3];
+            char3Array[0] = (char4Array[0] << 2) + ((char4Array[1] & 0x30) >> 4);
+            char3Array[1] = ((char4Array[1] & 0xf) << 4) + ((char4Array[2] & 0x3c) >> 2);
+            char3Array[2] = ((char4Array[2] & 0x3) << 6) + char4Array[3];
 
             for (i = 0; (i < 3); i++)
-                AddChar(ret, char_array_3[i]);
+                AddChar(output, char3Array[i]);
             i = 0;
         }
     }
     //debug
-    //printf("%d %s\n", i, char_array_4);
+    //printf("%d %s\n", i, char4Array);
     if (i) {
         for (j = i; j < 4; j++)
-            char_array_4[j] = 0;
-        //printf("%d %s\n", i, char_array_4);
+            char4Array[j] = 0;
+        //printf("%d %s\n", i, char4Array);
         for (j = 0; j < 4; j++)
-            char_array_4[j] = strchr(base64_chars,char_array_4[j]) - base64_chars;
-        //printf("char_array_4=%d %s\n", i, char_array_4);
-        char_array_3[0] = (char_array_4[0] << 2) + ((char_array_4[1] & 0x30) >> 4);
-        //printf("char_array_3[0]= %c\n",char_array_3[0]);
-        char_array_3[1] = ((char_array_4[1] & 0xf) << 4) + ((char_array_4[2] & 0x3c) >> 2);
-        char_array_3[2] = ((char_array_4[2] & 0x3) << 6) + char_array_4[3];
+            char4Array[j] = strchr(base64_chars,char4Array[j]) - base64_chars;
+        //printf("char4Array=%d %s\n", i, char4Array);
+        char3Array[0] = (char4Array[0] << 2) + ((char4Array[1] & 0x30) >> 4);
+        //printf("char3Array[0]= %c\n",char3Array[0]);
+        char3Array[1] = ((char4Array[1] & 0xf) << 4) + ((char4Array[2] & 0x3c) >> 2);
+        char3Array[2] = ((char4Array[2] & 0x3) << 6) + char4Array[3];
 
         for (j = 0; (j < i - 1); j++)
-            AddChar(ret, char_array_3[j]);
+            AddChar(output, char3Array[j]);
     }
 
-    //return &ret;
+    //outputurn &output;
 }
